@@ -15,21 +15,35 @@ class MyApp extends StatelessWidget {
   }
 }
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+
+  MyHomePage({required this.title});
+
+
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
+
 }
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  bool _change = false;
-  double _end = 400;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-      _change = !_change;
-    });
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
+  late AnimationController controller;
+  late Animation<double>  animation;
+
+  @override
+  void initState() {
+    super.initState();
+    // initialization code
+    controller = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 1),
+    );
+    animation = Tween<double>(begin: 0.2,end: 1).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeInBack)
+    );
+     // controller.forward();
+    controller.repeat(reverse: true);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,46 +54,34 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Text(
-            //   'You have pushed the button this many times:',
-            // ),
-            // Text(
-            //   '$_counter',
-            //   style: Theme.of(context).textTheme.headline4,
-            // ),
-            // AnimatedContainer(
-            //   duration: Duration(seconds:1),
-            //   curve:Curves.easeIn,
-            //   width:_change ? 200 : 100,
-            //   height: _change ? 200 : 100,
-            //   color: _change ? Colors.green : Colors.red,
-            // ),
-            TweenAnimationBuilder(
-              tween: Tween<double>(begin: 100.0, end:_end),
-              onEnd: () {
-                if( _end <=0 ) return;
-                setState(() {
-                  _end  = _end - 50;
-                });
-              },
-              duration: Duration(seconds: 3),
-              builder: (context,double value, child){
-                print(value);
-                return Container(
-                  width: value,
-                  height: value,
-                  color: Colors.blue,
-                );
-              },
+            FadeTransition(
+              opacity: animation,
+              child: Container(
+              width: 200,
+              height: 200,
+              color: Colors.red,
             ),
+            ),
+            RotationTransition(
+              turns:animation,
+              child: Container(
+                width: 200,
+                height:200,
+                color: Colors.green,
+              ),
+            ),
+          ScaleTransition(scale: animation,
+          child: Container(
+              width: 200,
+              height:200,
+              color:Colors.blue
+          ),
+          )
+
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
+
     );
   }
 }
