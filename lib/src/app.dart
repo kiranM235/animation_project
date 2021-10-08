@@ -7,11 +7,13 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "Animation",
       home: SafeArea(
         child: Scaffold(
           appBar: AppBar(
             title: Text("Animation"),
+            centerTitle: true,
           ),
           body: CatAnimation(),
       ),
